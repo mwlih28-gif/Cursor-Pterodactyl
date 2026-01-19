@@ -1,219 +1,382 @@
-# 🚀 VPS'e Kurulum Rehberi
+# 🚀 Deployment Guide - Gaming Control Panel
 
-## 1. GitHub'dan Projeyi Çek
+Bu rehber VPS üzerinde Gaming Control Panel'i nasıl kuracağınızı adım adım açıklar.
+
+## 📋 Ön Gereksinimler
+
+- Ubuntu 20.04+ veya Debian 11+ VPS
+- Minimum 2GB RAM
+- Root veya sudo erişimi
+- İnternet bağlantısı
+
+## 🔧 Hızlı Kurulum
+
+### 1. VPS'e Bağlanın
 
 ```bash
-# SSH ile VPS'e bağlan
-ssh root@your-vps-ip
+ssh root@YOUR_VPS_IP
+```
 
-# Projeyi klonla
+### 2. Repository'yi Klonlayın
+
+```bash
+cd ~
 git clone https://github.com/mwlih28-gif/Cursor-Pterodactyl.git
 cd Cursor-Pterodactyl
 ```
 
-## 2. Otomatik Kurulum Scriptini Çalıştır
+### 3. Install Script'i Çalıştırın
 
 ```bash
-# Kurulum scriptini çalıştırılabilir yap
-chmod +x install.sh installer.sh
-
-# Kurulumu başlat
+chmod +x install.sh
 sudo ./install.sh
 ```
 
-Kurulum sırasında sorulacak sorular:
-- Domain adresi (opsiyonel)
-- SSL sertifikası (Let's Encrypt)
-- Database adı, kullanıcı, şifre
-- Redis şifresi
-- Admin email, username, password
+**NOT:** Eğer `git pull` hatası alırsanız (local changes), şu komutları çalıştırın:
 
-## 3. Kurulum Sonrası
+```bash
+cd ~/Cursor-Pterodactyl
+git stash
+git pull
+chmod +x install.sh
+sudo ./install.sh
+```
+
+## 🎯 Kurulum Seçenekleri
+
+Install script'i çalıştırdığınızda size şu seçenekler sunulur:
+
+### [0] Install the Panel (API + Frontend)
+Sadece Panel'i kurar (Backend API + Frontend)
+
+### [1] Install the Daemon (Node Agent)
+Sadece Daemon'ı kurar (Node Agent)
+
+### [2] Install both [0] and [1] on the same machine ⭐ ÖNERİLEN
+Hem Panel hem Daemon'ı aynı makinede kurar (Test/Development için ideal)
+
+### [3] Install Panel with SSL (Let's Encrypt)
+SSL sertifikası ile Panel'i kurar (Production için önerilir)
+
+### [4] Uninstall Panel or Daemon
+Kurulumu kaldırır
+
+## 📝 Kurulum Adımları
+
+### 1. Sistem Gereksinimleri Kontrolü
+
+Script otomatik olarak şunları kontrol eder:
+- OS sürümü
+- RAM miktarı
+- Disk alanı
+
+### 2. Domain veya IP Ayarları
+
+- **Domain varsa:** Domain adınızı girin (örn: `panel.example.com`)
+- **Domain yoksa:** Boş bırakın, IP adresi kullanılır
+
+### 3. Veritabanı Ayarları
+
+- **Database name:** Varsayılan `gaming_panel` (Enter ile geçebilirsiniz)
+- **Database username:** Varsayılan `postgres` (Enter ile geçebilirsiniz)
+- **Database password:** Boş bırakırsanız otomatik oluşturulur
+
+### 4. Redis Ayarları
+
+- **Redis password:** Boş bırakırsanız otomatik oluşturulur
+
+### 5. Admin Hesabı
+
+- **Admin email:** Admin hesabınızın e-posta adresi
+- **Admin username:** Varsayılan `admin` (Enter ile geçebilirsiniz)
+- **Admin password:** Boş bırakırsanız otomatik oluşturulur
+
+## 🛠️ Manuel Kurulum (Sorun Giderme)
+
+Eğer otomatik kurulum başarısız olursa, adım adım manuel kurulum yapabilirsiniz:
+
+### 1. Git Pull Hatası Çözümü
+
+```bash
+cd ~/Cursor-Pterodactyl
+git stash                    # Local değişiklikleri sakla
+git pull                     # Güncellemeleri çek
+git stash pop                # Değişiklikleri geri getir (isteğe bağlı)
+```
+
+### 2. Go Kurulumu
+
+```bash
+# Go'yu kontrol et
+which go
+
+# Go yoksa manuel kurulum
+cd /tmp
+wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz
+rm -rf /usr/local/go
+tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz
+rm go1.21.5.linux-amd64.tar.gz
+
+# PATH'i export et (geçici)
+export PATH=$PATH:/usr/local/go/bin
+
+# PATH'i kalıcı yap
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# Go versiyonunu kontrol et
+go version
+```
+
+### 3. Backend Manuel Kurulumu
+
+```bash
+cd ~/Cursor-Pterodactyl/backend
+
+# PATH'i export et
+export PATH=$PATH:/usr/local/go/bin
+
+# Bağımlılıkları indir
+/usr/local/go/bin/go mod download
+/usr/local/go/bin/go mod tidy
+
+# Backend'i derle
+/usr/local/go/bin/go build -o gaming-panel-api main.go
+
+# Test et
+./gaming-panel-api
+```
+
+### 4. Daemon Manuel Kurulumu
+
+```bash
+cd ~/Cursor-Pterodactyl/daemon
+
+# PATH'i export et
+export PATH=$PATH:/usr/local/go/bin
+
+# Bağımlılıkları indir
+/usr/local/go/bin/go mod download
+/usr/local/go/bin/go mod tidy
+
+# Daemon'ı derle
+/usr/local/go/bin/go build -o gaming-panel-daemon main.go
+
+# Test et
+./gaming-panel-daemon
+```
+
+## 🔍 Sorun Giderme
+
+### Sorun: `go: command not found`
+
+**Çözüm:**
+```bash
+export PATH=$PATH:/usr/local/go/bin
+# Veya tam path kullanın:
+/usr/local/go/bin/go version
+```
+
+### Sorun: `git pull` hatası (local changes)
+
+**Çözüm:**
+```bash
+cd ~/Cursor-Pterodactyl
+git stash
+git pull
+chmod +x install.sh
+sudo ./install.sh
+```
+
+### Sorun: `go.sum` missing entries
+
+**Çözüm:**
+```bash
+cd ~/Cursor-Pterodactyl/backend  # veya daemon
+export PATH=$PATH:/usr/local/go/bin
+/usr/local/go/bin/go mod download
+/usr/local/go/bin/go mod tidy
+```
+
+### Sorun: Backend build hatası
+
+**Çözüm:**
+```bash
+cd ~/Cursor-Pterodactyl/backend
+export PATH=$PATH:/usr/local/go/bin
+rm -rf go.sum
+/usr/local/go/bin/go mod download
+/usr/local/go/bin/go mod tidy
+/usr/local/go/bin/go clean -cache
+/usr/local/go/bin/go build -o gaming-panel-api main.go
+```
+
+### Sorun: Database bağlantı hatası
+
+**Çözüm:**
+```bash
+# PostgreSQL servisini kontrol et
+sudo systemctl status postgresql
+
+# PostgreSQL'i başlat
+sudo systemctl start postgresql
+
+# Bağlantıyı test et
+sudo -u postgres psql -c "SELECT version();"
+```
+
+### Sorun: Redis bağlantı hatası
+
+**Çözüm:**
+```bash
+# Redis servisini kontrol et
+sudo systemctl status redis-server
+
+# Redis'i başlat
+sudo systemctl start redis-server
+
+# Bağlantıyı test et
+redis-cli ping
+```
+
+## 🌐 Erişim Bilgileri
 
 Kurulum tamamlandıktan sonra:
 
-```bash
-# Giriş bilgilerini kontrol et
-cat /opt/gaming-panel/credentials.txt
+- **Panel URL:** `http://YOUR_VPS_IP:3001` veya `https://YOUR_DOMAIN`
+- **API URL:** `http://YOUR_VPS_IP:3000` veya `https://YOUR_DOMAIN/api`
 
-# Servis durumunu kontrol et
-systemctl status gaming-panel-api
-systemctl status gaming-panel-daemon
-systemctl status gaming-panel-frontend
+### Admin Giriş Bilgileri
 
-# Logları kontrol et
-journalctl -u gaming-panel-api -f
-```
+Kurulum sırasında oluşturduğunuz admin hesabı ile giriş yapabilirsiniz:
+- **Email:** Kurulum sırasında girdiğiniz email
+- **Username:** Kurulum sırasında girdiğiniz username
+- **Password:** Kurulum sırasında oluşturulan veya girdiğiniz şifre
 
-## 4. Panel'e Giriş
-
-- Frontend URL: `http://your-ip:3001` veya `https://your-domain`
-- Admin hesabı ile giriş yap
-
-## 5. Minecraft Server Kurulumu
-
-### A) Node Oluştur
-
-1. Admin Panel > Nodes > Create New
-2. Bilgileri doldur:
-   - Name: Node-1
-   - Hostname: node1.example.com
-   - IP: VPS IP adresi
-   - Port: 8080
-   - Total RAM: 16 GB (örn: 17179869184 bytes)
-   - Total CPU: 8 cores (örn: 8000000000 nano CPUs)
-   - Total Disk: 100 GB (örn: 107374182400 bytes)
-
-### B) Allocation Ekle
-
-1. Node detay sayfasına git
-2. Allocations sekmesi
-3. "Add Allocation" tıkla
-4. IP:Port ekle (örn: 178.208.187.30:25565)
-
-### C) Minecraft Server Oluştur
-
-1. Dashboard > Create Server
-2. Bilgileri doldur:
-   - Name: My Minecraft Server
-   - Node: Oluşturduğun node'u seç
-   - Docker Image: `itzg/minecraft-server`
-   - Memory Limit: 4 GB (4294967296 bytes)
-   - CPU Limit: 2000000000 (2 cores)
-   - Disk Limit: 20 GB (21474836480 bytes)
-   - Allocation: Oluşturduğun allocation'ı seç
-
-### D) Server Başlat
-
-1. Server detay sayfasına git
-2. "Start" butonuna tıkla
-3. Console sekmesinden server durumunu izle
-
-## 6. Minecraft Server Yapılandırması
-
-Server başladıktan sonra:
-
-1. Files sekmesine git
-2. `server.properties` dosyasını düzenle:
-   - `online-mode=true` (güvenlik için)
-   - `difficulty=easy` (zorluk)
-   - `gamemode=survival` (oyun modu)
-   - `max-players=20` (max oyuncu sayısı)
-3. Değişiklikleri kaydet
-4. Server'ı restart et
-
-## 7. Firewall Ayarları
+**NOT:** Şifre otomatik oluşturulduysa, kurulum sonunda ekranda gösterilir. Log dosyasını kontrol edebilirsiniz:
 
 ```bash
-# Minecraft portunu aç (25565)
-ufw allow 25565/tcp
-
-# Panel portlarını aç
-ufw allow 3000/tcp  # Backend API
-ufw allow 3001/tcp  # Frontend
-ufw allow 80/tcp    # HTTP
-ufw allow 443/tcp   # HTTPS
-
-# Firewall durumunu kontrol et
-ufw status
+cat /var/log/gaming-panel-installer.log | grep -i password
 ```
 
-## 8. DNS Ayarları (Domain kullanıyorsanız)
+## 📦 Servis Yönetimi
 
-A Record ekle:
-```
-Type: A
-Host: @ (veya panel)
-Value: VPS IP adresi
-TTL: 3600
-```
-
-## 9. SSL Sertifikası (Opsiyonel)
-
-Eğer kurulum sırasında SSL eklemediyseniz:
+### Backend Servisini Kontrol Etme
 
 ```bash
-certbot --nginx -d your-domain.com --email your-email@example.com
+sudo systemctl status gaming-panel-backend
 ```
 
-## 10. Servisleri Yönetme
+### Backend Servisini Başlatma/Durdurma
 
 ```bash
-# Servisleri başlat
-systemctl start gaming-panel-api
-systemctl start gaming-panel-daemon
-systemctl start gaming-panel-frontend
-
-# Servisleri durdur
-systemctl stop gaming-panel-api
-systemctl stop gaming-panel-daemon
-systemctl stop gaming-panel-frontend
-
-# Servisleri yeniden başlat
-systemctl restart gaming-panel-api
-systemctl restart gaming-panel-daemon
-systemctl restart gaming-panel-frontend
-
-# Servis durumunu kontrol et
-systemctl status gaming-panel-api
+sudo systemctl start gaming-panel-backend
+sudo systemctl stop gaming-panel-backend
+sudo systemctl restart gaming-panel-backend
 ```
 
-## 11. Sorun Giderme
-
-### Servis çalışmıyor
-```bash
-# Logları kontrol et
-journalctl -u gaming-panel-api -n 50
-journalctl -u gaming-panel-daemon -n 50
-
-# Port kullanımını kontrol et
-netstat -tulpn | grep :3000
-lsof -i :3000
-```
-
-### Database bağlantı hatası
-```bash
-# PostgreSQL durumunu kontrol et
-systemctl status postgresql
-
-# Database'e bağlan
-sudo -u postgres psql
-\l  # Database listesi
-\q  # Çıkış
-```
-
-### Redis bağlantı hatası
-```bash
-# Redis durumunu kontrol et
-systemctl status redis-server
-
-# Redis'e bağlan
-redis-cli
-PING  # Yanıt: PONG olmalı
-```
-
-## 12. Güncelleme
+### Daemon Servisini Kontrol Etme
 
 ```bash
-cd /opt/gaming-panel
-git pull
-cd backend && go build -o gaming-panel-api main.go
-cd ../daemon && go build -o gaming-panel-daemon main.go
-cd ../frontend && npm install && npm run build
-systemctl restart gaming-panel-api gaming-panel-daemon gaming-panel-frontend
+sudo systemctl status gaming-panel-daemon
 ```
 
-## İpuçları
+### Daemon Servisini Başlatma/Durdurma
 
-1. **Güvenlik**: Admin şifresini güçlü tutun
-2. **Backup**: Düzenli olarak database ve server dosyalarını yedekleyin
-3. **Monitoring**: Servis loglarını düzenli kontrol edin
-4. **Resources**: Node kaynaklarını (RAM, CPU) doğru ayarlayın
-5. **Ports**: Firewall'da gerekli portları açık tutun
+```bash
+sudo systemctl start gaming-panel-daemon
+sudo systemctl stop gaming-panel-daemon
+sudo systemctl restart gaming-panel-daemon
+```
 
-## Destek
+### Logları İzleme
+
+```bash
+# Backend logları
+sudo journalctl -u gaming-panel-backend -f
+
+# Daemon logları
+sudo journalctl -u gaming-panel-daemon -f
+
+# Installer logları
+tail -f /var/log/gaming-panel-installer.log
+```
+
+## 🔐 Güvenlik
+
+### Firewall Ayarları
+
+```bash
+# UFW firewall kurulumu (eğer yoksa)
+sudo apt install ufw
+
+# Gerekli portları aç
+sudo ufw allow 22/tcp    # SSH
+sudo ufw allow 80/tcp    # HTTP
+sudo ufw allow 443/tcp   # HTTPS
+sudo ufw allow 3000/tcp  # Backend API (sadece internal için)
+sudo ufw allow 3001/tcp  # Frontend (development için)
+
+# Firewall'u aktif et
+sudo ufw enable
+sudo ufw status
+```
+
+### SSL Sertifikası (Production)
+
+SSL sertifikası için seçenek [3]'ü kullanabilirsiniz veya manuel olarak:
+
+```bash
+# Certbot kurulumu
+sudo apt install certbot python3-certbot-nginx
+
+# SSL sertifikası al
+sudo certbot --nginx -d YOUR_DOMAIN
+
+# Otomatik yenileme test
+sudo certbot renew --dry-run
+```
+
+## 🎮 Minecraft Sunucusu Kurulumu
+
+Panel kurulduktan sonra Minecraft sunucusu kurmak için:
+
+1. Panel'e giriş yapın: `http://YOUR_VPS_IP:3001`
+2. Dashboard'dan "New Server" butonuna tıklayın
+3. Sunucu ayarlarını yapılandırın:
+   - **Server Type:** Minecraft
+   - **Version:** 1.20.1 (veya istediğiniz versiyon)
+   - **RAM:** 2048MB (veya daha fazla)
+   - **Port:** 25565 (veya başka bir port)
+4. "Create Server" butonuna tıklayın
+5. Sunucunuz hazır! Console'dan başlatabilirsiniz.
+
+## 📞 Destek
 
 Sorun yaşarsanız:
 1. Log dosyalarını kontrol edin
-2. GitHub Issues'da arama yapın
-3. Yeni issue açın
+2. GitHub Issues'a sorun bildirin
+3. Installer log'unu paylaşın: `/var/log/gaming-panel-installer.log`
+
+## ✅ Kurulum Sonrası Kontrol Listesi
+
+- [ ] Panel'e erişebiliyor musunuz?
+- [ ] Admin hesabı ile giriş yapabiliyor musunuz?
+- [ ] Backend servisi çalışıyor mu? (`sudo systemctl status gaming-panel-backend`)
+- [ ] Daemon servisi çalışıyor mu? (`sudo systemctl status gaming-panel-daemon`)
+- [ ] Database bağlantısı çalışıyor mu?
+- [ ] Redis bağlantısı çalışıyor mu?
+- [ ] Firewall ayarları yapıldı mı?
+- [ ] SSL sertifikası kuruldu mu? (Production için)
+
+## 🎉 Başarılı Kurulum!
+
+Kurulum tamamlandıktan sonra Gaming Control Panel'inizi kullanmaya başlayabilirsiniz!
+
+**Sonraki Adımlar:**
+1. Panel'e giriş yapın
+2. İlk sunucunuzu oluşturun
+3. Plugin'leri yükleyin
+4. Kullanıcıları yönetin
+
+Mutlu oyunlar! 🎮

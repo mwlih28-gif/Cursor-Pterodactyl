@@ -492,14 +492,28 @@ install_backend() {
         install_golang
     fi
     
+    # PATH'i export et
     export PATH=$PATH:/usr/local/go/bin
+    export GOROOT=/usr/local/go
+    export GOPATH=$HOME/go
+    
+    # Go'nun çalıştığını doğrula
+    if ! command -v go &> /dev/null; then
+        error "Go installation failed. Please check /usr/local/go/bin"
+    fi
     
     # Bağımlılıkları indir ve derle
     output "Downloading Go dependencies..."
-    go mod download
-    go mod tidy
+    /usr/local/go/bin/go mod download || {
+        output "Running go mod download..."
+        /usr/local/go/bin/go mod download
+    }
+    /usr/local/go/bin/go mod tidy || {
+        output "Running go mod tidy..."
+        /usr/local/go/bin/go mod tidy
+    }
     output "Building backend..."
-    go build -o gaming-panel-api main.go
+    /usr/local/go/bin/go build -o gaming-panel-api main.go || error "Failed to build backend"
     
     # .env dosyası oluştur
     cat > .env << EOF
@@ -1000,13 +1014,27 @@ install_daemon_service() {
         install_golang
     fi
     
+    # PATH'i export et
     export PATH=$PATH:/usr/local/go/bin
+    export GOROOT=/usr/local/go
+    export GOPATH=$HOME/go
+    
+    # Go'nun çalıştığını doğrula
+    if ! command -v go &> /dev/null; then
+        error "Go installation failed. Please check /usr/local/go/bin"
+    fi
     
     output "Downloading Go dependencies..."
-    go mod download || true
-    go mod tidy || true
+    /usr/local/go/bin/go mod download || {
+        output "Running go mod download..."
+        /usr/local/go/bin/go mod download
+    }
+    /usr/local/go/bin/go mod tidy || {
+        output "Running go mod tidy..."
+        /usr/local/go/bin/go mod tidy
+    }
     output "Building daemon..."
-    go build -o gaming-panel-daemon main.go || error "Failed to build daemon"
+    /usr/local/go/bin/go build -o gaming-panel-daemon main.go || error "Failed to build daemon"
     
     # .env dosyası
     cat > .env << EOF
