@@ -85,45 +85,6 @@ EOF
     sleep 2
 }
 
-# Kurulum seçenekleri
-done=false
-while [ "$done" == false ]; do
-    welcome
-    
-    options=(
-        "Install the Panel (API + Frontend)"
-        "Install the Daemon (Node Agent)"
-        "Install both [0] and [1] on the same machine"
-        "Install Panel with SSL (Let's Encrypt)"
-        "Uninstall Panel or Daemon"
-    )
-
-    actions=(
-        "panel"
-        "daemon"
-        "panel;daemon"
-        "panel_ssl"
-        "uninstall"
-    )
-
-    output "What would you like to do?"
-    output ""
-
-    for i in "${!options[@]}"; do
-        output "[$i] ${options[$i]}"
-    done
-
-    echo ""
-    echo -n "* Input 0-$((${#actions[@]} - 1)): "
-    read -r action
-
-    [ -z "$action" ] && error "Input is required" && sleep 2 && continue
-
-    valid_input=("$(for ((i = 0; i <= ${#actions[@]} - 1; i += 1)); do echo "${i}"; done)")
-    [[ ! " ${valid_input[*]} " =~ ${action} ]] && warning "Invalid option" && sleep 2 && continue
-    [[ " ${valid_input[*]} " =~ ${action} ]] && done=true && IFS=";" read -r i1 i2 <<<"${actions[$action]}" && execute "$i1" "$i2"
-done
-
 # Ana kurulum fonksiyonu
 execute() {
     echo -e "\n\n* gaming-panel-installer $(date) - Installing $1\n\n" >>$LOG_PATH
