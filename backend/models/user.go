@@ -13,7 +13,6 @@ type User struct {
 	PasswordHash string         `json:"-" gorm:"not null"`
 	RoleID       uint           `json:"role_id" gorm:"not null"`
 	Role         Role           `json:"role,omitempty" gorm:"foreignKey:RoleID"`
-	Servers      []Server       `json:"servers,omitempty"`
 	CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`
 	DeletedAt    gorm.DeletedAt `json:"-" gorm:"index"`
