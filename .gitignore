@@ -13,7 +13,7 @@ vendor/
 *.o
 
 # Go
-go.sum
+# go.sum - NOT ignored, required for reproducible builds
 
 # Frontend
 .next/
