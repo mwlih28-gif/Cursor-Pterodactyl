@@ -495,7 +495,10 @@ install_backend() {
     export PATH=$PATH:/usr/local/go/bin
     
     # Bağımlılıkları indir ve derle
+    output "Downloading Go dependencies..."
     go mod download
+    go mod tidy
+    output "Building backend..."
     go build -o gaming-panel-api main.go
     
     # .env dosyası oluştur
