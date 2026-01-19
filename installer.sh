@@ -7,8 +7,8 @@
 
 set -euo pipefail
 
-INSTALLER_URL="https://raw.githubusercontent.com/yourusername/gaming-panel/main/install.sh"
-GITHUB_REPO="https://github.com/yourusername/gaming-panel.git"
+INSTALLER_URL="https://raw.githubusercontent.com/mwlih28-gif/Cursor-Pterodactyl/main/install.sh"
+GITHUB_REPO="https://github.com/mwlih28-gif/Cursor-Pterodactyl.git"
 INSTALL_DIR="/tmp/gaming-panel-installer"
 
 print_banner() {

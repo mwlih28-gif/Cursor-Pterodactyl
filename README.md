@@ -2,9 +2,9 @@
 
 High-performance game server control panel with microservices architecture. Modern, dark-themed UI similar to Pterodactyl with advanced features.
 
-![GitHub](https://img.shields.io/github/license/yourusername/gaming-panel)
-![GitHub stars](https://img.shields.io/github/stars/yourusername/gaming-panel)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/gaming-panel)
+![GitHub](https://img.shields.io/github/license/mwlih28-gif/Cursor-Pterodactyl)
+![GitHub stars](https://img.shields.io/github/stars/mwlih28-gif/Cursor-Pterodactyl)
+![GitHub issues](https://img.shields.io/github/issues/mwlih28-gif/Cursor-Pterodactyl)
 
 ## 🚀 Hızlı Kurulum (Otomatik)
 
@@ -17,8 +17,8 @@ bash <(curl -s https://raw.githubusercontent.com/yourusername/gaming-panel/main/
 ### Manuel Kurulum
 
 ```bash
-git clone https://github.com/yourusername/gaming-panel.git
-cd gaming-panel
+git clone https://github.com/mwlih28-gif/Cursor-Pterodactyl.git
+cd Cursor-Pterodactyl
 chmod +x install.sh
 sudo ./install.sh
 ```

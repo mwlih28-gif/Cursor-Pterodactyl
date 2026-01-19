@@ -23,7 +23,7 @@ set -e
 # Versiyon bilgisi
 export GITHUB_SOURCE="v1.0.0"
 export SCRIPT_RELEASE="v1.0.0"
-export GITHUB_BASE_URL="https://raw.githubusercontent.com/yourusername/gaming-panel/main"
+export GITHUB_BASE_URL="https://raw.githubusercontent.com/mwlih28-gif/Cursor-Pterodactyl/main"
 
 LOG_PATH="/var/log/gaming-panel-installer.log"
 
