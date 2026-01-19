@@ -437,15 +437,26 @@ install_database() {
 install_backend() {
     output "Installing backend..."
     
-    mkdir -p "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
+    # Script'in bulunduğu dizini bul
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     
-    # Kaynak kodları kopyala veya klonla
-    if [[ -d "../backend" ]]; then
-        cp -r ../backend "$INSTALL_DIR/"
+    # Backend dizinini kontrol et
+    if [[ ! -d "$SCRIPT_DIR/backend" ]]; then
+        # Mevcut dizinde kontrol et
+        if [[ -d "./backend" ]]; then
+            SOURCE_DIR="$(pwd)"
+        else
+            error "Backend source code not found. Please ensure you're running from the project directory."
+            return 1
+        fi
     else
-        error "Backend source code not found. Please ensure you're running from the project directory."
+        SOURCE_DIR="$SCRIPT_DIR"
     fi
+    
+    mkdir -p "$INSTALL_DIR"
+    
+    # Kaynak kodları kopyala
+    cp -r "$SOURCE_DIR/backend" "$INSTALL_DIR/"
     
     cd "$INSTALL_DIR/backend"
     
@@ -604,14 +615,26 @@ SQL
 install_frontend() {
     output "Installing frontend..."
     
-    cd "$INSTALL_DIR"
+    # Script'in bulunduğu dizini bul
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    
+    # Frontend dizinini kontrol et
+    if [[ ! -d "$SCRIPT_DIR/frontend" ]]; then
+        # Mevcut dizinde kontrol et
+        if [[ -d "./frontend" ]]; then
+            SOURCE_DIR="$(pwd)"
+        else
+            error "Frontend source code not found. Please ensure you're running from the project directory."
+            return 1
+        fi
+    else
+        SOURCE_DIR="$SCRIPT_DIR"
+    fi
+    
+    mkdir -p "$INSTALL_DIR"
     
     # Kaynak kodları kopyala
-    if [[ -d "../frontend" ]]; then
-        cp -r ../frontend "$INSTALL_DIR/"
-    else
-        error "Frontend source code not found."
-    fi
+    cp -r "$SOURCE_DIR/frontend" "$INSTALL_DIR/"
     
     cd "$INSTALL_DIR/frontend"
     
