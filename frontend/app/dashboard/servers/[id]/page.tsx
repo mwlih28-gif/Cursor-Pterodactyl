@@ -14,6 +14,10 @@ interface Server {
   name: string
   status: string
   docker_image: string
+  node?: {
+    name: string
+    ip: string
+  }
   allocation?: {
     ip: string
     port: number

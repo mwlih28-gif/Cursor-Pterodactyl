@@ -15,6 +15,7 @@ interface Server {
   docker_image: string
   node?: {
     name: string
+    ip: string
   }
 }
 
