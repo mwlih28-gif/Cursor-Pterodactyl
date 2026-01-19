@@ -17,6 +17,10 @@ interface Server {
     name: string
     ip: string
   }
+  allocation?: {
+    ip: string
+    port: number
+  }
 }
 
 interface Stats {
