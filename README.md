@@ -11,7 +11,7 @@ High-performance game server control panel with microservices architecture. Mode
 ### Tek Komut Kurulum
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/yourusername/gaming-panel/main/installer.sh)
+bash <(curl -s https://raw.githubusercontent.com/mwlih28-gif/Cursor-Pterodactyl/main/installer.sh)
 ```
 
 ### Manuel Kurulum
@@ -122,7 +122,7 @@ docker-compose up -d
 
 ### 1. Panel Kurulumu
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/yourusername/gaming-panel/main/installer.sh)
+bash <(curl -s https://raw.githubusercontent.com/mwlih28-gif/Cursor-Pterodactyl/main/installer.sh)
 ```
 
 ### 2. Node Oluştur

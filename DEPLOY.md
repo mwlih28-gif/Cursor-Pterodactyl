@@ -7,8 +7,8 @@
 ssh root@your-vps-ip
 
 # Projeyi klonla
-git clone https://github.com/yourusername/gaming-panel.git
-cd gaming-panel
+git clone https://github.com/mwlih28-gif/Cursor-Pterodactyl.git
+cd Cursor-Pterodactyl
 ```
 
 ## 2. Otomatik Kurulum Scriptini Çalıştır
