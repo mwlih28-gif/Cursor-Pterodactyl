@@ -922,14 +922,43 @@ start_services() {
 install_daemon_service() {
     output "Installing daemon..."
     
-    mkdir -p "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
+    # Script'in bulunduğu dizini bul
+    if [[ "${BASH_SOURCE[0]}" == /* ]]; then
+        SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+    else
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    fi
     
-    if [[ -d "../daemon" ]]; then
-        cp -r ../daemon "$INSTALL_DIR/"
+    # Mevcut çalışma dizini
+    CURRENT_DIR="$(pwd)"
+    
+    # Daemon dizinini bul
+    SOURCE_DIR=""
+    if [[ -d "$SCRIPT_DIR/daemon" ]]; then
+        SOURCE_DIR="$SCRIPT_DIR"
+        output "Found daemon in script directory: $SOURCE_DIR"
+    elif [[ -d "$CURRENT_DIR/daemon" ]]; then
+        SOURCE_DIR="$CURRENT_DIR"
+        output "Found daemon in current directory: $SOURCE_DIR"
+    elif [[ -d "$SCRIPT_DIR/../daemon" ]]; then
+        SOURCE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+        output "Found daemon in parent directory: $SOURCE_DIR"
     else
         error "Daemon source code not found."
+        error "Searched in: $SCRIPT_DIR/daemon"
+        error "Searched in: $CURRENT_DIR/daemon"
+        error "Searched in: $SCRIPT_DIR/../daemon"
+        error "Current directory: $CURRENT_DIR"
+        error "Script directory: $SCRIPT_DIR"
+        error "Please ensure you're running from the project directory."
+        return 1
     fi
+    
+    mkdir -p "$INSTALL_DIR"
+    
+    # Kaynak kodları kopyala
+    output "Copying daemon from $SOURCE_DIR/daemon to $INSTALL_DIR/daemon"
+    cp -r "$SOURCE_DIR/daemon" "$INSTALL_DIR/"
     
     cd "$INSTALL_DIR/daemon"
     
