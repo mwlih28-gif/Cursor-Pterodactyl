@@ -1002,8 +1002,11 @@ install_daemon_service() {
     
     export PATH=$PATH:/usr/local/go/bin
     
-    go mod download
-    go build -o gaming-panel-daemon main.go
+    output "Downloading Go dependencies..."
+    go mod download || true
+    go mod tidy || true
+    output "Building daemon..."
+    go build -o gaming-panel-daemon main.go || error "Failed to build daemon"
     
     # .env dosyası
     cat > .env << EOF
