@@ -57,12 +57,13 @@ func (h *Hub) Run() {
 			log.Printf("Client disconnected. Total clients: %d", len(h.clients))
 
 		case message := <-h.broadcast:
-			for client := range h.clients {
+			for clientConn := range h.clients {
+				client := h.clients[clientConn]
 				select {
 				case client.send <- message:
 				default:
 					close(client.send)
-					delete(h.clients, client)
+					delete(h.clients, clientConn)
 				}
 			}
 		}
@@ -90,14 +91,15 @@ func (h *Hub) BroadcastToServer(serverUUID string, message interface{}) {
 	}
 
 	if room, ok := h.serverRooms[serverUUID]; ok {
-		for _, client := range room {
+		for clientConn := range room {
+			client := room[clientConn]
 			select {
 			case client.send <- data:
 			default:
 				close(client.send)
-				delete(h.clients, client.conn)
+				delete(h.clients, clientConn)
 				if h.serverRooms[serverUUID] != nil {
-					delete(h.serverRooms[serverUUID], client.conn)
+					delete(h.serverRooms[serverUUID], clientConn)
 				}
 			}
 		}
