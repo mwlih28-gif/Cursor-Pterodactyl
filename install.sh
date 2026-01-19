@@ -459,14 +459,24 @@ install_backend() {
         SOURCE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
         output "Found backend in parent directory: $SOURCE_DIR"
     else
-        error "Backend source code not found."
-        error "Searched in: $SCRIPT_DIR/backend"
-        error "Searched in: $CURRENT_DIR/backend"
-        error "Searched in: $SCRIPT_DIR/../backend"
-        error "Current directory: $CURRENT_DIR"
-        error "Script directory: $SCRIPT_DIR"
-        error "Please ensure you're running from the project directory."
-        return 1
+        # GitHub'dan klonla
+        warning "Backend source code not found locally. Cloning from GitHub..."
+        TEMP_DIR="/tmp/gaming-panel-source"
+        mkdir -p "$TEMP_DIR"
+        cd "$TEMP_DIR"
+        if git clone https://github.com/mwlih28-gif/Cursor-Pterodactyl.git . 2>/dev/null; then
+            SOURCE_DIR="$TEMP_DIR"
+            output "Cloned source code from GitHub"
+        else
+            error "Backend source code not found and could not clone from GitHub."
+            error "Searched in: $SCRIPT_DIR/backend"
+            error "Searched in: $CURRENT_DIR/backend"
+            error "Searched in: $SCRIPT_DIR/../backend"
+            error "Current directory: $CURRENT_DIR"
+            error "Script directory: $SCRIPT_DIR"
+            error "Please ensure you're running from the project directory or check internet connection."
+            return 1
+        fi
     fi
     
     mkdir -p "$INSTALL_DIR"
@@ -654,14 +664,24 @@ install_frontend() {
         SOURCE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
         output "Found frontend in parent directory: $SOURCE_DIR"
     else
-        error "Frontend source code not found."
-        error "Searched in: $SCRIPT_DIR/frontend"
-        error "Searched in: $CURRENT_DIR/frontend"
-        error "Searched in: $SCRIPT_DIR/../frontend"
-        error "Current directory: $CURRENT_DIR"
-        error "Script directory: $SCRIPT_DIR"
-        error "Please ensure you're running from the project directory."
-        return 1
+        # GitHub'dan klonla
+        warning "Frontend source code not found locally. Cloning from GitHub..."
+        TEMP_DIR="/tmp/gaming-panel-source"
+        mkdir -p "$TEMP_DIR"
+        cd "$TEMP_DIR"
+        if git clone https://github.com/mwlih28-gif/Cursor-Pterodactyl.git . 2>/dev/null; then
+            SOURCE_DIR="$TEMP_DIR"
+            output "Cloned source code from GitHub"
+        else
+            error "Frontend source code not found and could not clone from GitHub."
+            error "Searched in: $SCRIPT_DIR/frontend"
+            error "Searched in: $CURRENT_DIR/frontend"
+            error "Searched in: $SCRIPT_DIR/../frontend"
+            error "Current directory: $CURRENT_DIR"
+            error "Script directory: $SCRIPT_DIR"
+            error "Please ensure you're running from the project directory or check internet connection."
+            return 1
+        fi
     fi
     
     mkdir -p "$INSTALL_DIR"
@@ -944,14 +964,24 @@ install_daemon_service() {
         SOURCE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
         output "Found daemon in parent directory: $SOURCE_DIR"
     else
-        error "Daemon source code not found."
-        error "Searched in: $SCRIPT_DIR/daemon"
-        error "Searched in: $CURRENT_DIR/daemon"
-        error "Searched in: $SCRIPT_DIR/../daemon"
-        error "Current directory: $CURRENT_DIR"
-        error "Script directory: $SCRIPT_DIR"
-        error "Please ensure you're running from the project directory."
-        return 1
+        # GitHub'dan klonla
+        warning "Daemon source code not found locally. Cloning from GitHub..."
+        TEMP_DIR="/tmp/gaming-panel-source"
+        mkdir -p "$TEMP_DIR"
+        cd "$TEMP_DIR"
+        if git clone https://github.com/mwlih28-gif/Cursor-Pterodactyl.git . 2>/dev/null; then
+            SOURCE_DIR="$TEMP_DIR"
+            output "Cloned source code from GitHub"
+        else
+            error "Daemon source code not found and could not clone from GitHub."
+            error "Searched in: $SCRIPT_DIR/daemon"
+            error "Searched in: $CURRENT_DIR/daemon"
+            error "Searched in: $SCRIPT_DIR/../daemon"
+            error "Current directory: $CURRENT_DIR"
+            error "Script directory: $SCRIPT_DIR"
+            error "Please ensure you're running from the project directory or check internet connection."
+            return 1
+        fi
     fi
     
     mkdir -p "$INSTALL_DIR"
