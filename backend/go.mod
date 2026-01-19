@@ -1,4 +1,4 @@
-module github.com/pterodactyl/gaming-panel/backend
+module gaming-panel/backend
 
 go 1.21
 

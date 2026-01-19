@@ -1,4 +1,4 @@
-module github.com/pterodactyl/gaming-panel/daemon
+module gaming-panel/daemon
 
 go 1.21
 
