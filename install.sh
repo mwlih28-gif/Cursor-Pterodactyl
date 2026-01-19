@@ -438,24 +438,41 @@ install_backend() {
     output "Installing backend..."
     
     # Script'in bulunduğu dizini bul
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    
-    # Backend dizinini kontrol et
-    if [[ ! -d "$SCRIPT_DIR/backend" ]]; then
-        # Mevcut dizinde kontrol et
-        if [[ -d "./backend" ]]; then
-            SOURCE_DIR="$(pwd)"
-        else
-            error "Backend source code not found. Please ensure you're running from the project directory."
-            return 1
-        fi
+    if [[ "${BASH_SOURCE[0]}" == /* ]]; then
+        SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
     else
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    fi
+    
+    # Mevcut çalışma dizini
+    CURRENT_DIR="$(pwd)"
+    
+    # Backend dizinini bul
+    SOURCE_DIR=""
+    if [[ -d "$SCRIPT_DIR/backend" ]]; then
         SOURCE_DIR="$SCRIPT_DIR"
+        output "Found backend in script directory: $SOURCE_DIR"
+    elif [[ -d "$CURRENT_DIR/backend" ]]; then
+        SOURCE_DIR="$CURRENT_DIR"
+        output "Found backend in current directory: $SOURCE_DIR"
+    elif [[ -d "$SCRIPT_DIR/../backend" ]]; then
+        SOURCE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+        output "Found backend in parent directory: $SOURCE_DIR"
+    else
+        error "Backend source code not found."
+        error "Searched in: $SCRIPT_DIR/backend"
+        error "Searched in: $CURRENT_DIR/backend"
+        error "Searched in: $SCRIPT_DIR/../backend"
+        error "Current directory: $CURRENT_DIR"
+        error "Script directory: $SCRIPT_DIR"
+        error "Please ensure you're running from the project directory."
+        return 1
     fi
     
     mkdir -p "$INSTALL_DIR"
     
     # Kaynak kodları kopyala
+    output "Copying backend from $SOURCE_DIR/backend to $INSTALL_DIR/backend"
     cp -r "$SOURCE_DIR/backend" "$INSTALL_DIR/"
     
     cd "$INSTALL_DIR/backend"
@@ -616,24 +633,41 @@ install_frontend() {
     output "Installing frontend..."
     
     # Script'in bulunduğu dizini bul
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    
-    # Frontend dizinini kontrol et
-    if [[ ! -d "$SCRIPT_DIR/frontend" ]]; then
-        # Mevcut dizinde kontrol et
-        if [[ -d "./frontend" ]]; then
-            SOURCE_DIR="$(pwd)"
-        else
-            error "Frontend source code not found. Please ensure you're running from the project directory."
-            return 1
-        fi
+    if [[ "${BASH_SOURCE[0]}" == /* ]]; then
+        SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
     else
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    fi
+    
+    # Mevcut çalışma dizini
+    CURRENT_DIR="$(pwd)"
+    
+    # Frontend dizinini bul
+    SOURCE_DIR=""
+    if [[ -d "$SCRIPT_DIR/frontend" ]]; then
         SOURCE_DIR="$SCRIPT_DIR"
+        output "Found frontend in script directory: $SOURCE_DIR"
+    elif [[ -d "$CURRENT_DIR/frontend" ]]; then
+        SOURCE_DIR="$CURRENT_DIR"
+        output "Found frontend in current directory: $SOURCE_DIR"
+    elif [[ -d "$SCRIPT_DIR/../frontend" ]]; then
+        SOURCE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+        output "Found frontend in parent directory: $SOURCE_DIR"
+    else
+        error "Frontend source code not found."
+        error "Searched in: $SCRIPT_DIR/frontend"
+        error "Searched in: $CURRENT_DIR/frontend"
+        error "Searched in: $SCRIPT_DIR/../frontend"
+        error "Current directory: $CURRENT_DIR"
+        error "Script directory: $SCRIPT_DIR"
+        error "Please ensure you're running from the project directory."
+        return 1
     fi
     
     mkdir -p "$INSTALL_DIR"
     
     # Kaynak kodları kopyala
+    output "Copying frontend from $SOURCE_DIR/frontend to $INSTALL_DIR/frontend"
     cp -r "$SOURCE_DIR/frontend" "$INSTALL_DIR/"
     
     cd "$INSTALL_DIR/frontend"
